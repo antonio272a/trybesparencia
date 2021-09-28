@@ -51,7 +51,7 @@ const pegaDeputados = async () => {
 }
 
 const pegaDespesasDeDeputado = async (id, pag) => {
-  const response = await fetch(`${BASE_URL}deputados/${id}/despesas`);
+  const response = await fetch(`${BASE_URL}deputados/${id}/despesas?ano=2020&pagina=${pag}&itens=100`);
   const json = await response.json();
   return json.dados;
 }
@@ -61,16 +61,18 @@ const calculaTotalDaPagina = (despesas) => despesas.reduce((accumulator, actual)
 const calculaTotalGastoDe1Deputado = async (id) => {
   let counter = 1;
   let totalGastoPeloDeputado = 0;
+
   while (true) {
     const despesas = await pegaDespesasDeDeputado(id, counter);
+    console.log(id, despesas)
     if (despesas.length === 0) {
       break;
     };
     const totalDaPagina = calculaTotalDaPagina(despesas);
-
     totalGastoPeloDeputado += totalDaPagina;
     counter += 1;
   }
+  console.log('saiu do while')
   totalGastoPeloDeputado = Number.parseFloat(totalGastoPeloDeputado).toFixed(2)
   return totalGastoPeloDeputado;
 }
@@ -95,53 +97,67 @@ const criaOpcoesDePartido = () => {
   });
 }
 
-const criaElementoDeputado = async (sectionQuery, urlImg, nomeEleitoral, partido, uf, id) => {
+const criaElementoDeputado = async (sectionQuery, deputado) => {
   const section = document.querySelector(sectionQuery);
   const div = document.createElement('div');
   const img = document.createElement('img');
   const name = document.createElement('h3');
   const info = document.createElement('p');
-  // const totalGasto = document.createElement('p');
-  // const total = await calculaTotalGastoDe1Deputado(id)
-  // totalGasto.innerText = `R$ ${total}`;
-  img.src = urlImg;
-  name.innerText = nomeEleitoral;
-  info.innerText = `${uf} - ${partido}`;
+  const totalGasto = document.createElement('p');
+  const total = await calculaTotalGastoDe1Deputado(deputado.id)
+  totalGasto.innerText = `R$ ${total}`;
+  img.src = deputado.urlFoto;
+  name.innerText = deputado.nome;
+  info.innerText = `${deputado.siglaUf} - ${deputado.siglaPartido}`;
   div.appendChild(img);
   div.appendChild(name);
   div.appendChild(info);
-  // div.appendChild(totalGasto);
+  div.appendChild(totalGasto);
   section.appendChild(div);
 }
 
-const gerarListaDeputados = async (sectionQuery, filtro) => {
+const gerarListaDeputados = async (sectionQuery, deputados) => {
   const section = sectionQuery;
-  const deputados = await pegaDeputados();
-  deputados.forEach((deputado) => {
-    criaElementoDeputado(section, deputado.urlFoto, deputado.nome, deputado.siglaPartido, deputado.siglaUf, deputado.id)
-  })
+  for (let index = 0; index < deputados.length; index += 1) {
+    await criaElementoDeputado(section, deputados[index]);
+  }
 }
 
+const pegaDeputadosFiltrados = async (filtro) => {
+  const response = await fetch(`${BASE_URL}deputados/?${filtro[0]}${filtro[1]}`, info);
+  const json = await response.json();
+  return json.dados;
+}
 
+const geraDeputadosFiltrados = async (filtro) => {
+  const deputados = await pegaDeputadosFiltrados(filtro);
+  gerarListaDeputados('.top-10-mais', deputados);
 
+}
 
 const filtrarDeputados = (event) => {
   event.preventDefault();
-  const estado = document.getElementById('select-uf').value
-  const partido = document.getElementById('select-partido').value
+  document.querySelector('.top-10-mais').innerHTML = ''
+  let estado = document.getElementById('select-uf').value
+  let partido = document.getElementById('select-partido').value
   console.log(estado);
   console.log(partido);
-  if (estado === 'Selecione uma UF' && partido ===  'Selecione um Partido') {
-    window.alert('Selecione um Estado ou Partido')
+  if (estado === 'Selecione uma UF') {
+    estado = ''
   }
-  const filtro = [ estado, partido];
-  return filtro;
+  if (partido === 'Selecione um Partido') {
+    partido = ''
+  }
+  const filtroEstado = `&siglaUf=${estado}`
+  const fitroPartido = `&siglaPartido=${partido}`
+  const filtro = [filtroEstado, fitroPartido];
+  geraDeputadosFiltrados(filtro);
 }
+
 botaoFiltrar.addEventListener('click', filtrarDeputados);
 
 window.onload = async () => {
   pegaDeputados();
-  gerarListaDeputados('.top-10-mais');
   criaOpcoesDeUF();
   criaOpcoesDePartido();
 }
