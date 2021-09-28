@@ -82,14 +82,35 @@ const criaOpcoesDeUF = () => {
   });
 }
 
-const criaElementoDeputado = () => {
+const criaOpcoesDePartido = () => {
+  const select = document.getElementById("select-partido");
+  partidos.forEach((partido) => {
+    const element = document.createElement('option');
+    element.value = partido;
+    element.innerText = partido;
+    select.appendChild(element);
+  });
+}
 
+const criaElementoDeputado = (sectionQuery, urlImg, nomeEleitoral, partido, uf) => {
+  const section = document.querySelector(sectionQuery);
+  const div = document.createElement('div');
+  const img = document.createElement('img');
+  const name = document.createElement('h3');
+  const info = document.createElement('p');
+  const totalGasto;
+  img.src = urlImg;
+  name.innerText = nomeEleitoral;
+  info.innerText = `${uf} - ${partido}`;
+  div.appendChild(img);
+  div.appendChild(name);
+  div.appendChild(info);
 }
 
 window.onload = async () => {
-  // const deputados = await pegaDeputados();
-  // console.log(await calculaTotalGastoDe1Deputado(deputados[0].id))
-  criaOpcoesDeUF()
+  const deputados = await pegaDeputados();
+  criaOpcoesDeUF();
+  criaOpcoesDePartido();
 }
 
 
