@@ -42,6 +42,8 @@ const info = {
   headers,
 }
 
+const botaoFiltrar = document.getElementById('filtrar');
+
 const pegaDeputados = async () => {
   const response = await fetch(`${BASE_URL}deputados/`, info);
   const json = await response.json();
@@ -49,7 +51,7 @@ const pegaDeputados = async () => {
 }
 
 const pegaDespesasDeDeputado = async (id, pag) => {
-  const response = await fetch(`${BASE_URL}deputados/${id}/despesas?ano=2019&ano=2020&ano=2021&pagina=${pag}&itens=100`);
+  const response = await fetch(`${BASE_URL}deputados/${id}/despesas`);
   const json = await response.json();
   return json.dados;
 }
@@ -69,6 +71,7 @@ const calculaTotalGastoDe1Deputado = async (id) => {
     totalGastoPeloDeputado += totalDaPagina;
     counter += 1;
   }
+  totalGastoPeloDeputado = Number.parseFloat(totalGastoPeloDeputado).toFixed(2)
   return totalGastoPeloDeputado;
 }
 
@@ -92,23 +95,53 @@ const criaOpcoesDePartido = () => {
   });
 }
 
-const criaElementoDeputado = (sectionQuery, urlImg, nomeEleitoral, partido, uf) => {
+const criaElementoDeputado = async (sectionQuery, urlImg, nomeEleitoral, partido, uf, id) => {
   const section = document.querySelector(sectionQuery);
   const div = document.createElement('div');
   const img = document.createElement('img');
   const name = document.createElement('h3');
   const info = document.createElement('p');
-  const totalGasto;
+  // const totalGasto = document.createElement('p');
+  // const total = await calculaTotalGastoDe1Deputado(id)
+  // totalGasto.innerText = `R$ ${total}`;
   img.src = urlImg;
   name.innerText = nomeEleitoral;
   info.innerText = `${uf} - ${partido}`;
   div.appendChild(img);
   div.appendChild(name);
   div.appendChild(info);
+  // div.appendChild(totalGasto);
+  section.appendChild(div);
 }
 
-window.onload = async () => {
+const gerarListaDeputados = async (sectionQuery, filtro) => {
+  const section = sectionQuery;
   const deputados = await pegaDeputados();
+  deputados.forEach((deputado) => {
+    criaElementoDeputado(section, deputado.urlFoto, deputado.nome, deputado.siglaPartido, deputado.siglaUf, deputado.id)
+  })
+}
+
+
+
+
+const filtrarDeputados = (event) => {
+  event.preventDefault();
+  const estado = document.getElementById('select-uf').value
+  const partido = document.getElementById('select-partido').value
+  console.log(estado);
+  console.log(partido);
+  if (estado === 'Selecione uma UF' && partido ===  'Selecione um Partido') {
+    window.alert('Selecione um Estado ou Partido')
+  }
+  const filtro = [ estado, partido];
+  return filtro;
+}
+botaoFiltrar.addEventListener('click', filtrarDeputados);
+
+window.onload = async () => {
+  pegaDeputados();
+  gerarListaDeputados('.top-10-mais');
   criaOpcoesDeUF();
   criaOpcoesDePartido();
 }
