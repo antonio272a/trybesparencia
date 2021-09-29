@@ -17,8 +17,18 @@
 
 .main-container {
   display: flex;
-  flex-flow: row;
+  flex-flow: column;
   justify-content: space-between;
+  align-items: center;
+}
+
+.pesquisa {
+  width: 200px;
+}
+
+#top-container {
+  display: flex;
+  justify-content: space-around;
 }
 
 .top-3-mais,
@@ -27,7 +37,6 @@
   flex-flow: column wrap;
   justify-content: center;
   align-items: center;
-
 }
 
 .top-3-mais div,
@@ -38,7 +47,6 @@
   align-items: center;
 }
 
-
 img {
-  width: 75px;
+  width: 100px;
 }
