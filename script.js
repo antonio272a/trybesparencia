@@ -132,9 +132,6 @@ const criaTop3Deputados = (deputados) => {
 }
 
 const criaTodosDeputadosFiltrados = (deputados) => {
-  const title = document.createElement('h2');
-  title.innerText = 'Lista de deputados filtrados'
-  document.querySelector('.titulo-deputados').appendChild(title)
   deputados.forEach((deputado) => criaElementoDeputado('.deputados-filtrados', deputado));
 }
 
@@ -148,6 +145,7 @@ const gerarListaDeputados = async (deputados) => {
   document.querySelector('.deputados-filtrados').innerText = '';
   criaTop3Deputados(deputados);
   criaTodosDeputadosFiltrados(deputados);
+  document.getElementById('filtrar').disabled = false;
 }
 
 const calculaTotalDeputado = async (deputado) => {
@@ -176,6 +174,7 @@ const geraDeputadosFiltrados = async (filtro) => {
 
 const filtrarDeputados = (event) => {
   event.preventDefault();
+  event.target.disabled = true;
   document.querySelector('.top-3-mais').innerHTML = 'Carregando...';
   document.querySelector('.top-3-menos').innerHTML = 'Carregando...';
   document.querySelector('.deputados-filtrados').innerHTML = 'Carregando...';

@@ -121,11 +121,11 @@ body {
   display: flex;
   flex-direction: column;
   text-align: center;
+  color: var(--cinza1);
 }
 
 .titulo-deputados {
   margin: 20px;
-  color: var(--cinza1);
 }
 
 .deputados-filtrados {
