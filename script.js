@@ -35,14 +35,14 @@ const states = [
   'TO',
 ];
 
-const partidos = ['MDB', 'PTB', 'PDT', 'PT', 'DEM', 'PCdoB', 'PSB', 'PSDB', 'PTC', 'PSC', 'PMN', 'CIDADANIA', 'PV', 'AVANTE', 'PP', 'PSTU', 'PCB', 'PRTB', 'DC', 'PCO', 'PODE', 'PSL', 'REPUBLICANOS', 'PSOL', 'PL', 'PSD', 'PATRIOTA', 'PROS', 'SOLIDARIEDADE', 'NOVO', 'REDE', 'PMD', 'UP'];
+const partidos = [
+  'MDB', 'PTB', 'PDT', 'PT', 'DEM', 'PCdoB', 'PSB', 'PSDB', 'PTC', 'PSC', 'PMN', 'CIDADANIA', 'PV', 'AVANTE', 'PP', 'PSTU', 'PCB', 'PRTB', 'DC', 'PCO', 'PODE', 'PSL', 'REPUBLICANOS', 'PSOL', 'PL', 'PSD', 'PATRIOTA', 'PROS', 'SOLIDARIEDADE', 'NOVO', 'REDE', 'PMD', 'UP', 
+];
 
 const info = {
   'method': 'GET',
   headers,
 }
-
-const botaoFiltrar = document.getElementById('filtrar');
 
 const pegaDeputados = async () => {
   const response = await fetch(`${BASE_URL}deputados/`, info);
@@ -53,6 +53,7 @@ const pegaDeputados = async () => {
 const pegaDespesasDeDeputado = async (id, pag) => {
   const response = await fetch(`${BASE_URL}deputados/${id}/despesas?ano=2021&pagina=${pag}&itens=100`);
   const json = await response.json();
+  console.log(json.dados);
   return json.dados;
 }
 
@@ -64,7 +65,8 @@ const calculaTotalGastoDe1Deputado = async (id) => {
 
   while (true) {
     const despesas = await pegaDespesasDeDeputado(id, counter);
-    if (despesas.length === 0) {
+    // Alterado de (despesas.length === 0) para economizar 1 reqquest por deputado
+    if (despesas.length < 100) {
       break;
     };
     const totalDaPagina = calculaTotalDaPagina(despesas);
@@ -99,16 +101,24 @@ const criaElementoDeputado = async (sectionQuery, deputado) => {
   const section = document.querySelector(sectionQuery);
   const div = document.createElement('div');
   const img = document.createElement('img');
-  const name = document.createElement('h3');
+  const name = document.createElement('h4');
   const info = document.createElement('p');
   const totalGasto = document.createElement('p');
-  const total = deputado.total;
-  totalGasto.innerText = `R$ ${total}`;
+  //Mensagem de erro caso não haja nenhum deputado com o filtro específico. Está dando um alert para cada vez que é rodada, refatorar. 
+  if(!deputado) {
+    window.alert('Nenhum deputado encontrado com estes parâmetros')
+    return
+  }
+  const total = deputado.total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
+  //Alterado para constar o total gasto.
+  totalGasto.innerText = `Total gasto: ${total}`;
   img.src = deputado.urlFoto;
   img.className = "img-circle";
   div.className = "div-card";
   name.innerText = deputado.nome;
   info.innerText = `${deputado.siglaUf} - ${deputado.siglaPartido}`;
+  //Adiciona a estilização com o bootstrap para o card
+  div.className = 'container'
   div.appendChild(img);
   div.appendChild(name);
   div.appendChild(info);
@@ -123,6 +133,14 @@ const gerarListaDeputados = async (deputados) => {
 
   const deputdosCresc = deputados.slice(0).sort((a, b) => a.total - b.total);
   const deputadosDecres = deputados.slice(0).sort((a, b) => b.total - a.total);
+<<<<<<< HEAD
+=======
+
+  // Implementada a mensagem de "carregando", codigo abaixo limpa a mensagem antes de carregar os cards de cada deputado
+  document.querySelector('.top-3-mais').innerHTML = '';
+  document.querySelector('.top-3-menos').innerHTML = '';
+
+>>>>>>> 85b99f53d2498534ddacdae3f5f8d05c344221b7
   for (let index = 0; index < 3; index += 1) {
     criaElementoDeputado('.top-3-menos', deputdosCresc[index]);
     criaElementoDeputado('.top-3-mais', deputadosDecres[index]);
@@ -144,13 +162,18 @@ const pegaDeputadosFiltrados = async (filtro) => {
 const geraDeputadosFiltrados = async (filtro) => {
   const deputados = await pegaDeputadosFiltrados(filtro);
   gerarListaDeputados(deputados);
-
 }
 
 const filtrarDeputados = (event) => {
   event.preventDefault();
+<<<<<<< HEAD
   document.querySelector('.top-3-mais').innerHTML = '';
   document.querySelector('.top-3-menos').innerHTML = '';
+=======
+  //Alteradas as linhas abaixo para mostrar a mensagem ao carregar os cards dos deputados (ver linha 134)
+  document.querySelector('.top-3-mais').innerHTML = 'Carregando...';
+  document.querySelector('.top-3-menos').innerHTML = 'Carregando...';
+>>>>>>> 85b99f53d2498534ddacdae3f5f8d05c344221b7
   let estado = document.getElementById('select-uf').value;
   let partido = document.getElementById('select-partido').value;
   if (estado === 'Selecione uma UF' && partido === 'Selecione um Partido') {
@@ -169,6 +192,7 @@ const filtrarDeputados = (event) => {
   geraDeputadosFiltrados(filtro);
 }
 
+const botaoFiltrar = document.getElementById('filtrar');
 botaoFiltrar.addEventListener('click', filtrarDeputados);
 
 window.onload = async () => {
@@ -193,5 +217,17 @@ deputado:
 -------------------
 votação:
 .id
+
+-------------------
+TODO 
+  Essencial
+    1. Estilizar
+    2. Fazer o footer.
+    3. Logo da Trybe no header? 
+  Opcional
+  1. Listar todos os deputados após os top 3? 
+  2. Talvez implementar uma função que ao clicar em um dos deputados pode carregar mais infos sobre ele.
+  3. Quando há menos de 3 ou menos deputados para o filtro especificado as duas listas ficam iguais, talvez refatorar para mostrar apenas uma lista. 
+-------------------
 
 */

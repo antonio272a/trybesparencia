@@ -72,18 +72,39 @@ body {
 
 .main-container {
   display: flex;
+<<<<<<< HEAD
   flex-flow: row;
   justify-content: space-around;
   /* background-color: var(--cinza-claro); */
   color: var(--cinza1);
+=======
+  flex-flow: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pesquisa {
+  width: 200px;
+}
+
+#top-container {
+  display: flex;
+  justify-content: space-around;
+>>>>>>> 85b99f53d2498534ddacdae3f5f8d05c344221b7
 }
 
 .top-3-mais,
 .top-3-menos {
   display: flex;
+<<<<<<< HEAD
   flex-direction: row;
   margin: 20px;
   width: 600px;
+=======
+  flex-flow: column wrap;
+  justify-content: center;
+  align-items: center;
+>>>>>>> 85b99f53d2498534ddacdae3f5f8d05c344221b7
 }
 
 .top-3-mais div,
@@ -94,6 +115,7 @@ body {
   align-items: center;
 }
 
+<<<<<<< HEAD
 .div-card {
   border: solid 1px var(--verde-escuro);
   border-radius: 10px;
@@ -114,4 +136,8 @@ h2 {
 
 h3 {
   text-align: center;
+=======
+img {
+  width: 100px;
+>>>>>>> 85b99f53d2498534ddacdae3f5f8d05c344221b7
 }
