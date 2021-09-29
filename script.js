@@ -51,7 +51,7 @@ const pegaDeputados = async () => {
 }
 
 const pegaDespesasDeDeputado = async (id, pag) => {
-  const response = await fetch(`${BASE_URL}deputados/${id}/despesas?ano=2020&pagina=${pag}&itens=100`);
+  const response = await fetch(`${BASE_URL}deputados/${id}/despesas?ano=2021&pagina=${pag}&itens=100`);
   const json = await response.json();
   return json.dados;
 }
@@ -64,7 +64,6 @@ const calculaTotalGastoDe1Deputado = async (id) => {
 
   while (true) {
     const despesas = await pegaDespesasDeDeputado(id, counter);
-    console.log(id, despesas)
     if (despesas.length === 0) {
       break;
     };
@@ -72,8 +71,7 @@ const calculaTotalGastoDe1Deputado = async (id) => {
     totalGastoPeloDeputado += totalDaPagina;
     counter += 1;
   }
-  console.log('saiu do while')
-  totalGastoPeloDeputado = Number.parseFloat(totalGastoPeloDeputado).toFixed(2)
+  totalGastoPeloDeputado = Number((totalGastoPeloDeputado).toFixed(2));
   return totalGastoPeloDeputado;
 }
 
@@ -104,7 +102,7 @@ const criaElementoDeputado = async (sectionQuery, deputado) => {
   const name = document.createElement('h3');
   const info = document.createElement('p');
   const totalGasto = document.createElement('p');
-  const total = await calculaTotalGastoDe1Deputado(deputado.id)
+  const total = deputado.total;
   totalGasto.innerText = `R$ ${total}`;
   img.src = deputado.urlFoto;
   name.innerText = deputado.nome;
@@ -115,12 +113,24 @@ const criaElementoDeputado = async (sectionQuery, deputado) => {
   div.appendChild(totalGasto);
   section.appendChild(div);
 }
-
-const gerarListaDeputados = async (sectionQuery, deputados) => {
-  const section = sectionQuery;
+const gerarListaDeputados = async (deputados) => {
   for (let index = 0; index < deputados.length; index += 1) {
-    await criaElementoDeputado(section, deputados[index]);
+    console.log('Deputado n°', index);
+    await calculaTotalDeputado(deputados[index]);
   }
+  const deputdosCresc = deputados.slice(0).sort((a, b) => a.total - b.total);
+  const deputadosDecres = deputados.slice(0).sort((a, b) => b.total - a.total);
+  console.log(deputdosCresc, deputadosDecres);
+
+  for (let index = 0; index < 3; index += 1) {
+    criaElementoDeputado('.top-3-menos', deputdosCresc[index]);
+    criaElementoDeputado('.top-3-mais', deputadosDecres[index]);
+  }
+}
+
+const calculaTotalDeputado = async (deputado) => {
+  const total = await calculaTotalGastoDe1Deputado(deputado.id);
+  deputado.total = total;
 }
 
 const pegaDeputadosFiltrados = async (filtro) => {
@@ -131,23 +141,25 @@ const pegaDeputadosFiltrados = async (filtro) => {
 
 const geraDeputadosFiltrados = async (filtro) => {
   const deputados = await pegaDeputadosFiltrados(filtro);
-  gerarListaDeputados('.top-10-mais', deputados);
+  gerarListaDeputados(deputados);
 
 }
 
 const filtrarDeputados = (event) => {
   event.preventDefault();
-  document.querySelector('.top-10-mais').innerHTML = ''
-  let estado = document.getElementById('select-uf').value
-  let partido = document.getElementById('select-partido').value
-  console.log(estado);
-  console.log(partido);
+  document.querySelector('.top-3-mais').innerHTML = '';
+  let estado = document.getElementById('select-uf').value;
+  let partido = document.getElementById('select-partido').value;
+  if (estado === 'Selecione uma UF' && partido === 'Selecione um Partido') {
+    window.alert('Você tem certeza? Eu não faria isso se fosse você');
+  }
   if (estado === 'Selecione uma UF') {
-    estado = ''
+    estado = '';
   }
   if (partido === 'Selecione um Partido') {
-    partido = ''
+    partido = '';
   }
+
   const filtroEstado = `&siglaUf=${estado}`
   const fitroPartido = `&siglaPartido=${partido}`
   const filtro = [filtroEstado, fitroPartido];

@@ -15,6 +15,30 @@
   align-items: center;
 }
 
+.main-container {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+}
+
+.top-3-mais,
+.top-3-menos {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.top-3-mais div,
+.top-3-menos div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
 img {
   width: 75px;
 }
