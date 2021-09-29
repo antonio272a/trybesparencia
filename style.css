@@ -30,10 +30,11 @@ body {
   display: flex;
   background-color: var(--verde-escuro);
   color: rgb(255, 255, 255);
-  height: 100px;
+  height: 150px;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
+  margin-bottom: 25px;
 }
 
 .title-logo {
@@ -72,39 +73,18 @@ body {
 
 .main-container {
   display: flex;
-<<<<<<< HEAD
   flex-flow: row;
   justify-content: space-around;
   /* background-color: var(--cinza-claro); */
   color: var(--cinza1);
-=======
-  flex-flow: column;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.pesquisa {
-  width: 200px;
-}
-
-#top-container {
-  display: flex;
-  justify-content: space-around;
->>>>>>> 85b99f53d2498534ddacdae3f5f8d05c344221b7
 }
 
 .top-3-mais,
 .top-3-menos {
   display: flex;
-<<<<<<< HEAD
   flex-direction: row;
   margin: 20px;
   width: 600px;
-=======
-  flex-flow: column wrap;
-  justify-content: center;
-  align-items: center;
->>>>>>> 85b99f53d2498534ddacdae3f5f8d05c344221b7
 }
 
 .top-3-mais div,
@@ -115,13 +95,20 @@ body {
   align-items: center;
 }
 
-<<<<<<< HEAD
 .div-card {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-items: center;
   border: solid 1px var(--verde-escuro);
   border-radius: 10px;
   width: 215px;
   padding: 5px;
   margin: 15px;
+}
+
+.div-card p {
+  text-align: center;
 }
 
 .img-circle {
@@ -130,14 +117,28 @@ body {
   border-radius: 10px;
 }
 
+.container-deputados-filtrados {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.titulo-deputados {
+  margin: 20px;
+  color: var(--cinza1);
+}
+
+.deputados-filtrados {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+}
+
 h2 {
   margin: 10px;
 }
 
 h3 {
   text-align: center;
-=======
-img {
-  width: 100px;
->>>>>>> 85b99f53d2498534ddacdae3f5f8d05c344221b7
 }

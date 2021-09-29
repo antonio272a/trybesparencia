@@ -36,7 +36,7 @@ const states = [
 ];
 
 const partidos = [
-  'MDB', 'PTB', 'PDT', 'PT', 'DEM', 'PCdoB', 'PSB', 'PSDB', 'PTC', 'PSC', 'PMN', 'CIDADANIA', 'PV', 'AVANTE', 'PP', 'PSTU', 'PCB', 'PRTB', 'DC', 'PCO', 'PODE', 'PSL', 'REPUBLICANOS', 'PSOL', 'PL', 'PSD', 'PATRIOTA', 'PROS', 'SOLIDARIEDADE', 'NOVO', 'REDE', 'PMD', 'UP', 
+  'MDB', 'PTB', 'PDT', 'PT', 'DEM', 'PCdoB', 'PSB', 'PSDB', 'PTC', 'PSC', 'PMN', 'CIDADANIA', 'PV', 'AVANTE', 'PP', 'PSTU', 'PCB', 'PRTB', 'DC', 'PCO', 'PODE', 'PSL', 'REPUBLICANOS', 'PSOL', 'PL', 'PSD', 'PATRIOTA', 'PROS', 'SOLIDARIEDADE', 'NOVO', 'REDE', 'PMD', 'UP',
 ];
 
 const info = {
@@ -53,7 +53,6 @@ const pegaDeputados = async () => {
 const pegaDespesasDeDeputado = async (id, pag) => {
   const response = await fetch(`${BASE_URL}deputados/${id}/despesas?ano=2021&pagina=${pag}&itens=100`);
   const json = await response.json();
-  console.log(json.dados);
   return json.dados;
 }
 
@@ -65,12 +64,12 @@ const calculaTotalGastoDe1Deputado = async (id) => {
 
   while (true) {
     const despesas = await pegaDespesasDeDeputado(id, counter);
-    // Alterado de (despesas.length === 0) para economizar 1 reqquest por deputado
+    const totalDaPagina = calculaTotalDaPagina(despesas);
+    totalGastoPeloDeputado += totalDaPagina;
+    // Alterado de (despesas.length === 0) para economizar 1 request por deputado
     if (despesas.length < 100) {
       break;
     };
-    const totalDaPagina = calculaTotalDaPagina(despesas);
-    totalGastoPeloDeputado += totalDaPagina;
     counter += 1;
   }
   totalGastoPeloDeputado = Number((totalGastoPeloDeputado).toFixed(2));
@@ -101,15 +100,13 @@ const criaElementoDeputado = async (sectionQuery, deputado) => {
   const section = document.querySelector(sectionQuery);
   const div = document.createElement('div');
   const img = document.createElement('img');
-  const name = document.createElement('h4');
+  const name = document.createElement('h3');
   const info = document.createElement('p');
   const totalGasto = document.createElement('p');
-  //Mensagem de erro caso não haja nenhum deputado com o filtro específico. Está dando um alert para cada vez que é rodada, refatorar. 
-  if(!deputado) {
-    window.alert('Nenhum deputado encontrado com estes parâmetros')
-    return
-  }
-  const total = deputado.total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
+  const total = deputado.total.toLocaleString('pt-br', {
+    style: 'currency',
+    currency: 'BRL'
+  });
   //Alterado para constar o total gasto.
   totalGasto.innerText = `Total gasto: ${total}`;
   img.src = deputado.urlFoto;
@@ -118,33 +115,39 @@ const criaElementoDeputado = async (sectionQuery, deputado) => {
   name.innerText = deputado.nome;
   info.innerText = `${deputado.siglaUf} - ${deputado.siglaPartido}`;
   //Adiciona a estilização com o bootstrap para o card
-  div.className = 'container'
   div.appendChild(img);
   div.appendChild(name);
   div.appendChild(info);
   div.appendChild(totalGasto);
   section.appendChild(div);
 }
+
+const criaTop3Deputados = (deputados) => {
+  const deputdosCresc = deputados.slice(0).sort((a, b) => a.total - b.total);
+  const deputadosDecres = deputados.slice(0).sort((a, b) => b.total - a.total);
+  for (let index = 0; index < 3; index += 1) {
+    criaElementoDeputado('.top-3-menos', deputdosCresc[index]);
+    criaElementoDeputado('.top-3-mais', deputadosDecres[index]);
+  }
+}
+
+const criaTodosDeputadosFiltrados = (deputados) => {
+  const title = document.createElement('h2');
+  title.innerText = 'Lista de deputados filtrados'
+  document.querySelector('.titulo-deputados').appendChild(title)
+  deputados.forEach((deputado) => criaElementoDeputado('.deputados-filtrados', deputado));
+}
+
 const gerarListaDeputados = async (deputados) => {
   for (let index = 0; index < deputados.length; index += 1) {
     console.log('Deputado n°', index);
     await calculaTotalDeputado(deputados[index]);
   }
-
-  const deputdosCresc = deputados.slice(0).sort((a, b) => a.total - b.total);
-  const deputadosDecres = deputados.slice(0).sort((a, b) => b.total - a.total);
-<<<<<<< HEAD
-=======
-
-  // Implementada a mensagem de "carregando", codigo abaixo limpa a mensagem antes de carregar os cards de cada deputado
-  document.querySelector('.top-3-mais').innerHTML = '';
-  document.querySelector('.top-3-menos').innerHTML = '';
-
->>>>>>> 85b99f53d2498534ddacdae3f5f8d05c344221b7
-  for (let index = 0; index < 3; index += 1) {
-    criaElementoDeputado('.top-3-menos', deputdosCresc[index]);
-    criaElementoDeputado('.top-3-mais', deputadosDecres[index]);
-  }
+  document.querySelector('.top-3-mais').innerText = '';
+  document.querySelector('.top-3-menos').innerText = '';
+  document.querySelector('.deputados-filtrados').innerText = '';
+  criaTop3Deputados(deputados);
+  criaTodosDeputadosFiltrados(deputados);
 }
 
 const calculaTotalDeputado = async (deputado) => {
@@ -155,29 +158,33 @@ const calculaTotalDeputado = async (deputado) => {
 const pegaDeputadosFiltrados = async (filtro) => {
   const response = await fetch(`${BASE_URL}deputados/?${filtro[0]}${filtro[1]}`, info);
   const json = await response.json();
-  console.log(`${BASE_URL}deputados/?${filtro[0]}${filtro[1]}`)
   return json.dados;
 }
 
 const geraDeputadosFiltrados = async (filtro) => {
   const deputados = await pegaDeputadosFiltrados(filtro);
-  gerarListaDeputados(deputados);
+  if (deputados.length !== 0) {
+    gerarListaDeputados(deputados);
+  } else {
+    window.alert('Nenhum deputado encontrado com esses filtros');
+    document.querySelector('.top-3-mais').innerText = '';
+    document.querySelector('.top-3-menos').innerText = '';
+    document.querySelector('.deputados-filtrados').innerText = '';
+  }
+
 }
 
 const filtrarDeputados = (event) => {
   event.preventDefault();
-<<<<<<< HEAD
-  document.querySelector('.top-3-mais').innerHTML = '';
-  document.querySelector('.top-3-menos').innerHTML = '';
-=======
-  //Alteradas as linhas abaixo para mostrar a mensagem ao carregar os cards dos deputados (ver linha 134)
   document.querySelector('.top-3-mais').innerHTML = 'Carregando...';
   document.querySelector('.top-3-menos').innerHTML = 'Carregando...';
->>>>>>> 85b99f53d2498534ddacdae3f5f8d05c344221b7
+  document.querySelector('.deputados-filtrados').innerHTML = 'Carregando...';
+
   let estado = document.getElementById('select-uf').value;
   let partido = document.getElementById('select-partido').value;
-  if (estado === 'Selecione uma UF' && partido === 'Selecione um Partido') {
+  if (estado === 'Selecione um Estado' && partido === 'Selecione um Partido') {
     window.alert('Você tem certeza? Eu não faria isso se fosse você');
+    return
   }
   if (estado === 'Selecione um Estado') {
     estado = '';
