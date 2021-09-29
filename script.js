@@ -168,6 +168,7 @@ const geraDeputadosFiltrados = async (filtro) => {
     document.querySelector('.top-3-mais').innerText = '';
     document.querySelector('.top-3-menos').innerText = '';
     document.querySelector('.deputados-filtrados').innerText = '';
+    document.getElementById('filtrar').disabled = false;
   }
 
 }
@@ -183,6 +184,10 @@ const filtrarDeputados = (event) => {
   let partido = document.getElementById('select-partido').value;
   if (estado === 'Selecione um Estado' && partido === 'Selecione um Partido') {
     window.alert('Você tem certeza? Eu não faria isso se fosse você');
+    document.querySelector('.top-3-mais').innerText = '';
+    document.querySelector('.top-3-menos').innerText = '';
+    document.querySelector('.deputados-filtrados').innerText = '';
+    document.getElementById('filtrar').disabled = false;
     return
   }
   if (estado === 'Selecione um Estado') {

@@ -10,6 +10,7 @@
   --cinza2: rgb(40, 42, 47);
   --cinza3: rgb(30, 31, 36);
   --cinza4: rgb(26, 27, 28);
+  --cinza5: rgb(168, 171, 182);
 }
 
 *,
@@ -61,6 +62,11 @@ body {
   display: flex;
   align-items: center;
   padding: 10px;
+}
+
+#select-uf,
+#select-partido {
+  color: var(--cinza5);
 }
 
 .btn-filter {
@@ -122,6 +128,7 @@ body {
   flex-direction: column;
   text-align: center;
   color: var(--cinza1);
+  margin-bottom: 100px;
 }
 
 .titulo-deputados {
@@ -141,4 +148,16 @@ h2 {
 
 h3 {
   text-align: center;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  padding: 20px;
+  height: 100px;
+  width: 100vw;
+  text-align: center;
+  background-color: var(--verde-escuro);
+  color: rgb(255, 255, 255);
+
 }
