@@ -22,7 +22,8 @@
 
 body {
   font-family: 'Montserrat', sans-serif;
-  background-color: var(--cinza-claro);
+  background-color: var(--cinza-claro) !important;
+  min-height: 100vh;
 }
 
 .header {
@@ -60,6 +61,7 @@ body {
   align-items: center;
   padding: 10px;
 }
+
 .btn-filter {
   padding: 20px;
 }
@@ -72,7 +74,7 @@ body {
   display: flex;
   flex-flow: row;
   justify-content: space-around;
-  background-color: var(--cinza-claro);
+  /* background-color: var(--cinza-claro); */
   color: var(--cinza1);
 }
 
@@ -92,17 +94,18 @@ body {
   align-items: center;
 }
 
-.div-card{
+.div-card {
   border: solid 1px var(--verde-escuro);
   border-radius: 10px;
   width: 215px;
-  padding: 15px;
+  padding: 5px;
+  margin: 15px;
 }
 
 .img-circle {
   height: 90px;
   width: 80px;
-  border-radius: 10px ;
+  border-radius: 10px;
 }
 
 h2 {

@@ -120,10 +120,9 @@ const gerarListaDeputados = async (deputados) => {
     console.log('Deputado n°', index);
     await calculaTotalDeputado(deputados[index]);
   }
+
   const deputdosCresc = deputados.slice(0).sort((a, b) => a.total - b.total);
   const deputadosDecres = deputados.slice(0).sort((a, b) => b.total - a.total);
-  console.log(deputdosCresc, deputadosDecres);
-
   for (let index = 0; index < 3; index += 1) {
     criaElementoDeputado('.top-3-menos', deputdosCresc[index]);
     criaElementoDeputado('.top-3-mais', deputadosDecres[index]);
@@ -138,6 +137,7 @@ const calculaTotalDeputado = async (deputado) => {
 const pegaDeputadosFiltrados = async (filtro) => {
   const response = await fetch(`${BASE_URL}deputados/?${filtro[0]}${filtro[1]}`, info);
   const json = await response.json();
+  console.log(`${BASE_URL}deputados/?${filtro[0]}${filtro[1]}`)
   return json.dados;
 }
 
@@ -150,12 +150,13 @@ const geraDeputadosFiltrados = async (filtro) => {
 const filtrarDeputados = (event) => {
   event.preventDefault();
   document.querySelector('.top-3-mais').innerHTML = '';
+  document.querySelector('.top-3-menos').innerHTML = '';
   let estado = document.getElementById('select-uf').value;
   let partido = document.getElementById('select-partido').value;
   if (estado === 'Selecione uma UF' && partido === 'Selecione um Partido') {
     window.alert('Você tem certeza? Eu não faria isso se fosse você');
   }
-  if (estado === 'Selecione uma UF') {
+  if (estado === 'Selecione um Estado') {
     estado = '';
   }
   if (partido === 'Selecione um Partido') {
