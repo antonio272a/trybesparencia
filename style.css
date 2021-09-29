@@ -74,6 +74,8 @@ body {
   justify-content: space-around;
   background-color: var(--cinza-claro);
   color: var(--cinza1);
+  height: 100%;
+
 }
 
 .top-3-mais,
