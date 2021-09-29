@@ -105,6 +105,8 @@ const criaElementoDeputado = async (sectionQuery, deputado) => {
   const total = deputado.total;
   totalGasto.innerText = `R$ ${total}`;
   img.src = deputado.urlFoto;
+  img.className = "img-circle";
+  div.className = "div-card";
   name.innerText = deputado.nome;
   info.innerText = `${deputado.siglaUf} - ${deputado.siglaPartido}`;
   div.appendChild(img);
